@@ -3,21 +3,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
-typedef struct StringNode{
-    int elem;
-    struct StringNode* next;
-} StringNode;
+typedef struct Node{
+    void* data;
+    struct Node *next;
+} Node;
 
-const bool empty(StringNode* head);
+typedef struct LinkedList{
+    Node* head;
+} LinkedList;
 
-const int front(StringNode* head);
+void initList(LinkedList *list);
 
-void addFront(const int e, StringNode** head);
+Node* createNode(void *data, size_t dataSize);
 
-void removeFront(StringNode** head);
+const bool empty(LinkedList *list);
 
-void printList(StringNode* head);
+const void* front(LinkedList *list);
+
+void pushFront(LinkedList *list, void *data, size_t dataSize);
+
+void removeFront(LinkedList *list);
+
+void printInt(const void *data);
+
+void printList(LinkedList *list, void (*printFunc)(const void*));
 
 
 #endif

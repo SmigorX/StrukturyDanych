@@ -1,31 +1,51 @@
 #include "single_list.h"
-const bool empty(StringNode* head){
-    return head == NULL;
+const bool empty(LinkedList *list){
+    return list->head == NULL;
 }
-const int front(StringNode* head){
-    return head->elem;
+const void* front(LinkedList *list){
+    return list->head->data;
 }
 
-void addFront(const int e, StringNode** head){
-    StringNode* v = (StringNode*)malloc(sizeof(StringNode));
-    if(v == NULL){
-        return;
+void initList(LinkedList *list){
+    list->head = NULL;
+}
+
+Node* createNode(void *data, size_t dataSize){
+    Node *newNode = (Node*) malloc(sizeof(Node));
+    if(newNode == NULL){
+        return NULL;
     }
-    v->elem = e;
-    v->next = *head;
-    *head = v;
+    newNode->data = malloc(dataSize);
+    if(newNode->data == NULL){
+        free(newNode);
+        return NULL;
+    }
+    memcpy(newNode->data, data, dataSize);
+    newNode->next = NULL;
+    return newNode;
 }
 
-void removeFront(StringNode** head){
-    StringNode* old = *head;
-    *head = old->next;
+void pushFront(LinkedList *list, void *data, size_t dataSize){
+    Node* newNode = createNode(data,dataSize);
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+void removeFront(LinkedList *list){
+    Node* old = list->head;
+    list->head = old->next;
+    free(old->data);
     free(old);
 }
 
-void printList(StringNode* head){
-    StringNode* temp = head;
+void printInt(const void *data) {
+    printf("%d -> ", *(int*) data);
+}
+
+void printList(LinkedList *list, void (*printFunc)(const void*)){
+    Node *temp = list->head;
     while(temp != NULL){
-        printf("%d -> ", temp->elem);
+        printFunc(temp->data);
         temp = temp-> next;
     }
     printf("NULL\n");

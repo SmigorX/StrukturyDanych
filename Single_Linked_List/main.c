@@ -4,9 +4,12 @@
 #include "single_list.h"
 
 int main(){
-    StringNode* head = NULL;
-    addFront(10, &head);
-    addFront(20, &head);
+    LinkedList list;
+    initList(&list);
 
-    printList(head);
+    pushFront(&list, &(int){10}, sizeof(int));
+    pushFront(&list, &(int){20}, sizeof(int));
+
+    printList(&list, printInt);
+
 }
