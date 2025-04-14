@@ -1,7 +1,7 @@
 #include "double_list.h"
 
 // returns 0 if successful, 1 if failed
-int initList(DoubleLinkedListUnion *list, ListType type) {
+int doubleInitList(DoubleLinkedListUnion *list, ListType type) {
     list = malloc(sizeof(DoubleLinkedListUnion));
 
     if (list == NULL) {
@@ -19,26 +19,26 @@ int initList(DoubleLinkedListUnion *list, ListType type) {
     return 0;
 };
 
-int createNode(void *data, size_t dataSize, Node *node) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    if (newNode == NULL) {
+int doubleCreateDoubleNode(void *data, size_t dataSize, DoubleNode *node) {
+    DoubleNode *newDoubleNode = (DoubleNode *)malloc(sizeof(node));
+    if (newDoubleNode == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
-    newNode->data = malloc(dataSize);
-    if (newNode->data == NULL) {
+    newDoubleNode->data = malloc(dataSize);
+    if (newDoubleNode->data == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return 1;
     };
-    memcpy(newNode->data, data, dataSize);
-    newNode->next = NULL;
-    newNode->prev = NULL;
-    node = newNode;
+    memcpy(newDoubleNode->data, data, dataSize);
+    newDoubleNode->next = NULL;
+    newDoubleNode->prev = NULL;
+    node = newDoubleNode;
     return 0;
 };
 
 // Returns 1 if empty
-const bool empty(DoubleLinkedListUnion *list, ListType type) {
+const bool doubleEmpty(DoubleLinkedListUnion *list, ListType type) {
     if (type == DLL) {
         return list->dll.head == NULL;
     } else if (type == DLLWT) {
@@ -46,69 +46,69 @@ const bool empty(DoubleLinkedListUnion *list, ListType type) {
     };
 };
 
-void pushFront(DoubleLinkedListUnion *list, ListType type, void *data,
-               size_t dataSize) {
+void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *data,
+                     size_t dataSize) {
 
-    Node *newNode = NULL;
-    int result = createNode(data, dataSize, newNode);
+    DoubleNode *newDoubleNode = NULL;
+    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
 
-    if (newNode == NULL || result == 1) {
+    if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");
         exit(1);
     }
 
     if (type == DLLWT) {
-        Node *oldHead = list->dllwt.head;
-        list->dllwt.head = newNode;
+        DoubleNode *oldHead = list->dllwt.head;
+        list->dllwt.head = newDoubleNode;
         oldHead->prev = list->dllwt.head;
         list->dllwt.head->next = oldHead;
     } else if (type == DLL) {
-        Node *oldHead = list->dll.head;
-        list->dll.head = newNode;
+        DoubleNode *oldHead = list->dll.head;
+        list->dll.head = newDoubleNode;
         oldHead->prev = list->dll.head;
         list->dll.head->next = oldHead;
     }
 };
 
-void pushBack(DoubleLinkedListUnion *list, ListType type, void *data,
-              size_t dataSize) {
+void doublePushBack(DoubleLinkedListUnion *list, ListType type, void *data,
+                    size_t dataSize) {
 
-    Node *newNode = NULL;
-    int result = createNode(data, dataSize, newNode);
+    DoubleNode *newDoubleNode = NULL;
+    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
 
-    if (newNode == NULL || result == 1) {
+    if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");
         exit(1);
     }
 
     if (type == DLLWT) {
-        Node *oldTail = list->dllwt.tail;
-        list->dllwt.tail = newNode;
-        oldTail->next = newNode;
+        DoubleNode *oldTail = list->dllwt.tail;
+        list->dllwt.tail = newDoubleNode;
+        oldTail->next = newDoubleNode;
         list->dllwt.tail->prev = oldTail;
     } else if (type == DLL) {
-        Node *currentElement = list->dll.head;
+        DoubleNode *currentElement = list->dll.head;
         while (currentElement->next != NULL) {
             currentElement = currentElement->next;
         }
-        currentElement->next = newNode;
-        newNode->prev = currentElement;
+        currentElement->next = newDoubleNode;
+        newDoubleNode->prev = currentElement;
     };
 };
 
-int pushIndex(DoubleLinkedListUnion *list, ListType type, int index, void *data,
-              size_t dataSize) {
+int doublePushIndex(DoubleLinkedListUnion *list, ListType type, int index,
+                    void *data, size_t dataSize) {
     int counter = 0;
 
-    Node *newNode = NULL;
-    int result = createNode(data, dataSize, newNode);
+    DoubleNode *newDoubleNode = NULL;
+    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
 
-    if (newNode == NULL || result == 1) {
+    if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");
         exit(1);
     }
 
-    Node *currentElement;
+    DoubleNode *currentElement;
 
     if (type == DLLWT) {
         currentElement = list->dllwt.head;
@@ -125,13 +125,13 @@ int pushIndex(DoubleLinkedListUnion *list, ListType type, int index, void *data,
         // push back if last element
         if (currentElement->next == NULL && index - counter == 1) {
             if (type == DLLWT) {
-                list->dllwt.tail = newNode;
-                currentElement->next = newNode;
+                list->dllwt.tail = newDoubleNode;
+                currentElement->next = newDoubleNode;
                 list->dllwt.tail->prev = currentElement;
                 return 0;
             } else if (type == DLL) {
-                currentElement->next = newNode;
-                newNode->prev = currentElement;
+                currentElement->next = newDoubleNode;
+                newDoubleNode->prev = currentElement;
                 return 0;
             } else {
                 return 1;
@@ -142,26 +142,26 @@ int pushIndex(DoubleLinkedListUnion *list, ListType type, int index, void *data,
         counter += 1;
     };
 
-    newNode->next = currentElement;
-    newNode->prev = currentElement->prev;
-    newNode->next->prev = newNode;
-    newNode->prev->next = newNode;
+    newDoubleNode->next = currentElement;
+    newDoubleNode->prev = currentElement->prev;
+    newDoubleNode->next->prev = newDoubleNode;
+    newDoubleNode->prev->next = newDoubleNode;
     return 0;
 };
 
 // Writes data from popped inedx to void *data argument pointer,
 // returns 0 if success, 1 if failure
-int popFront(DoubleLinkedListUnion *list, ListType type, void *content) {
+int doublePopFront(DoubleLinkedListUnion *list, ListType type, void *content) {
     if (type == DLLWT) {
         content = list->dllwt.head->data;
         list->dllwt.head->next->prev = NULL;
-        Node *oldHead = list->dllwt.head;
+        DoubleNode *oldHead = list->dllwt.head;
         list->dllwt.head = list->dllwt.head->next;
         free(oldHead);
     } else if (type == DLL) {
         content = list->dll.head->data;
         list->dll.head->next->prev = NULL;
-        Node *oldHead = list->dll.head;
+        DoubleNode *oldHead = list->dll.head;
         list->dll.head = list->dll.head->next;
         free(oldHead);
     } else {
@@ -173,21 +173,21 @@ int popFront(DoubleLinkedListUnion *list, ListType type, void *content) {
 
 // Writes data from popped inedx to void *data argument pointer, returns 0
 // if success, 1 if failure
-int popBack(DoubleLinkedListUnion *list, ListType type, void *content) {
+int doublePopBack(DoubleLinkedListUnion *list, ListType type, void *content) {
     if (type == DLLWT) {
-        Node *oldTail = list->dllwt.tail;
+        DoubleNode *oldTail = list->dllwt.tail;
         list->dllwt.tail = list->dllwt.tail->prev;
         list->dllwt.tail->next = NULL;
         content = oldTail->data;
         free(oldTail);
     } else if (type == DLL) {
-        Node *lastNode = list->dll.head;
-        while (lastNode->next != NULL) {
-            lastNode = lastNode->next;
+        DoubleNode *lastDoubleNode = list->dll.head;
+        while (lastDoubleNode->next != NULL) {
+            lastDoubleNode = lastDoubleNode->next;
         };
-        lastNode->prev->next = NULL;
-        content = lastNode->data;
-        free(lastNode);
+        lastDoubleNode->prev->next = NULL;
+        content = lastDoubleNode->data;
+        free(lastDoubleNode);
     } else {
         fprintf(stderr, "Wrong list type\n");
         content = NULL;
@@ -198,11 +198,11 @@ int popBack(DoubleLinkedListUnion *list, ListType type, void *content) {
 
 // Writes data from popped inedx to void *data argument pointer, returns 0
 // if success, 1 if failure
-int popIndex(DoubleLinkedListUnion *list, ListType type, int index,
-             void *content) {
+int doublePopIndex(DoubleLinkedListUnion *list, ListType type, int index,
+                   void *content) {
     int counter = 0;
 
-    Node *currentElement = NULL;
+    DoubleNode *currentElement = NULL;
 
     if (type == DLLWT) {
         currentElement = list->dllwt.head;
@@ -223,17 +223,17 @@ int popIndex(DoubleLinkedListUnion *list, ListType type, int index,
 
     if (currentElement->next == NULL) {
         if (type == DLLWT) {
-            Node *oldTail = list->dllwt.tail;
+            DoubleNode *oldTail = list->dllwt.tail;
             list->dllwt.tail = list->dllwt.tail->prev;
             list->dllwt.tail->next = NULL;
             content = oldTail->data;
             free(oldTail);
             return 0;
         } else if (type == DLL) {
-            Node *lastNode = currentElement;
-            lastNode->prev->next = NULL;
-            content = lastNode->data;
-            free(lastNode);
+            DoubleNode *lastDoubleNode = currentElement;
+            lastDoubleNode->prev->next = NULL;
+            content = lastDoubleNode->data;
+            free(lastDoubleNode);
             return 0;
         } else {
             fprintf(stderr, "Wrong list type\n");
@@ -249,15 +249,15 @@ int popIndex(DoubleLinkedListUnion *list, ListType type, int index,
 };
 
 // Comparison function type
-int compareInt(const void *a, const void *b) {
+int doubleCompareInt(const void *a, const void *b) {
     return (*(int *)a == *(int *)b);
 }
 
 // Function to find an element in the list
 // returns index if found, -1 if not found
-int findElement(DoubleLinkedListUnion *list, ListType type, CompareFunc compare,
-                void *content) {
-    Node *current;
+int doubleFindElement(DoubleLinkedListUnion *list, ListType type,
+                      CompareFunc compare, void *content) {
+    DoubleNode *current;
     if (type == DLL) {
         current = list->dll.head;
     } else if (type == DLLWT) {

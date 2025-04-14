@@ -5,19 +5,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Node {
+typedef struct DoubleNode {
     void *data;
-    struct Node *next;
-    struct Node *prev;
-} Node;
+    struct DoubleNode *next;
+    struct DoubleNode *prev;
+} DoubleNode;
 
 typedef struct DoubleLinkedList {
-    Node *head;
+    DoubleNode *head;
 } DoubleLinkedList;
 
 typedef struct DoubleLinkedListWithTail {
-    Node *head;
-    Node *tail;
+    DoubleNode *head;
+    DoubleNode *tail;
 } DoubleLinkedListWithTail;
 
 typedef union DoubleLinkedListUnion {
@@ -27,31 +27,32 @@ typedef union DoubleLinkedListUnion {
 
 typedef enum { DLL, DLLWT } ListType;
 
-int initList(DoubleLinkedListUnion *list, ListType type);
+int doubleInitList(DoubleLinkedListUnion *list, ListType type);
 
-int createNode(void *data, size_t dataSize, Node *node);
+int doubleCreateNode(void *data, size_t dataSize, DoubleNode *node);
 
-const bool empty(DoubleLinkedListUnion *list, ListType type);
+const bool doubleEmpty(DoubleLinkedListUnion *list, ListType type);
 
-void pushFront(DoubleLinkedListUnion *list, ListType type, void *content,
-               size_t dataSize);
-void pushBack(DoubleLinkedListUnion *list, ListType type, void *content,
-              size_t dataSize);
-int pushIndex(DoubleLinkedListUnion *list, ListType type, int index,
-              void *content, size_t dataSize);
+void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *content,
+                     size_t dataSize);
+void doublePushBack(DoubleLinkedListUnion *list, ListType type, void *content,
+                    size_t dataSize);
+int doublePushIndex(DoubleLinkedListUnion *list, ListType type, int index,
+                    void *content, size_t dataSize);
 
-int popFront(DoubleLinkedListUnion *list, ListType type, void *content);
-int popBack(DoubleLinkedListUnion *list, ListType type, void *content);
-int popIndex(DoubleLinkedListUnion *list, ListType type, int index,
-             void *content);
+int doublePopFront(DoubleLinkedListUnion *list, ListType type, void *content);
+int doublePopBack(DoubleLinkedListUnion *list, ListType type, void *content);
+int doublePopIndex(DoubleLinkedListUnion *list, ListType type, int index,
+                   void *content);
 
 typedef int (*CompareFunc)(const void *, const void *);
 
-int findElement(DoubleLinkedListUnion *list, ListType type, CompareFunc compare,
-                void *content);
+int doubleFindElement(DoubleLinkedListUnion *list, ListType type,
+                      CompareFunc compare, void *content);
 
 void printInt(const void *content);
 
-void printList(DoubleLinkedListUnion *list, void (*printFunc)(const void *));
+void doublePrintList(DoubleLinkedListUnion *list,
+                     void (*printFunc)(const void *));
 
 #endif
