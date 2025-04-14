@@ -2,26 +2,26 @@ CC = gcc
 CFLAGS = -Wall -I./Double_Linked_List -I./Single_Linked_List
 LDFLAGS = 
 SRC_DIRS = Double_Linked_List Single_Linked_List
-EXECUTABLE_NAME = linked_lists_program
-EXECUTABLE = ./output/$(EXECUTABLE_NAME)
+EXECUTABLE = ./output/linked_lists_program
 
-# Find all .c files in source directories and main.c
-SOURCES = $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) main.c
+# Recursively find all .c files in SRC_DIRS and include main.c
+SOURCES = $(shell find $(SRC_DIRS) -name '*.c') main.c
 
-# Generate object file names in build directory
-OBJECTS = $(addprefix build/, $(notdir $(SOURCES:.c=.o)))
+# Preserve subdirectory structure in build dir (e.g., Double_Linked_List/file.c -> build/Double_Linked_List/file.o)
+OBJECTS = $(patsubst %.c,build/%.o,$(SOURCES))
 
 all: $(EXECUTABLE)
 
-# Link all object files into executable in output directory
+# Link all objects into executable
 $(EXECUTABLE): $(OBJECTS) | output
 	$(CC) $(LDFLAGS) $^ -o $@
 
-# Compile .c to .o in build directory
+# Compile .c to .o, preserving subdirectories
 build/%.o: %.c | build
+	@mkdir -p $(@D)  # Ensure output subdirectory exists
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Create directories if they don't exist
+# Create directories
 build:
 	mkdir -p build
 
@@ -32,6 +32,3 @@ clean:
 	rm -rf build output
 
 .PHONY: all clean
-
-# Help make find source files in multiple directories
-vpath %.c $(SRC_DIRS) .

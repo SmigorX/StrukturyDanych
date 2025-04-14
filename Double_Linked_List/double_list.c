@@ -19,7 +19,7 @@ int doubleInitList(DoubleLinkedListUnion *list, ListType type) {
     return 0;
 };
 
-int doubleCreateDoubleNode(void *data, size_t dataSize, DoubleNode *node) {
+int doubleCreateNode(void *data, size_t dataSize, DoubleNode *node) {
     DoubleNode *newDoubleNode = (DoubleNode *)malloc(sizeof(node));
     if (newDoubleNode == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -50,7 +50,7 @@ void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *data,
                      size_t dataSize) {
 
     DoubleNode *newDoubleNode = NULL;
-    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
+    int result = doubleCreateNode(data, dataSize, newDoubleNode);
 
     if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");
@@ -74,7 +74,7 @@ void doublePushBack(DoubleLinkedListUnion *list, ListType type, void *data,
                     size_t dataSize) {
 
     DoubleNode *newDoubleNode = NULL;
-    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
+    int result = doubleCreateNode(data, dataSize, newDoubleNode);
 
     if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");
@@ -101,7 +101,7 @@ int doublePushIndex(DoubleLinkedListUnion *list, ListType type, int index,
     int counter = 0;
 
     DoubleNode *newDoubleNode = NULL;
-    int result = doubleCreateDoubleNode(data, dataSize, newDoubleNode);
+    int result = doubleCreateNode(data, dataSize, newDoubleNode);
 
     if (newDoubleNode == NULL || result == 1) {
         fprintf(stderr, "Failed to create new node\n");

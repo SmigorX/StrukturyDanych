@@ -1,10 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./Double_Linked_List/double_list.h"
-#include "./Single_Linked_List/single_list.h"
+#include "double_list.h"
+#include "single_list.h"
 
 int main() {
+    DoubleNode *node = NULL;
+    int data = 69;
+    int result;
+    result = doubleCreateNode(&data, sizeof(int), node);
+    if (result == 0) {
+        printf("Ok");
+    } else {
+        printf("Shit");
+    };
+
+    Node *singleNode = createNode(&data, sizeof(int));
+
     //    LinkedList list;
     //    initList(&list);
     //
