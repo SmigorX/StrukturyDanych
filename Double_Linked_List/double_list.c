@@ -43,8 +43,9 @@ const bool doubleEmpty(DoubleLinkedListUnion *list, ListType type) {
         return list->dll.head == NULL;
     } else if (type == DLLWT) {
         return list->dllwt.head == NULL;
-    };
-};
+    }
+    return NULL;
+}
 
 void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *data,
                      size_t dataSize) {
@@ -246,7 +247,8 @@ int doublePopIndex(DoubleLinkedListUnion *list, ListType type, int index,
     currentElement->next->prev = currentElement->prev;
     currentElement->prev->next = currentElement->next;
     free(currentElement);
-};
+    return 0;
+}
 
 // Comparison function type
 int doubleCompareInt(const void *a, const void *b) {
