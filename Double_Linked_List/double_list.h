@@ -1,5 +1,5 @@
-#ifndef SINGLE_LIST_H
-#define SINGLE_LIST_H
+#ifndef DOUBLE_LIST_H
+#define DOUBLE_LIST_H
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
