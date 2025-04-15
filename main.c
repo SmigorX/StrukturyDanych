@@ -1,13 +1,13 @@
+#include "Double_Linked_List/double_list.h"
+#include "Dynamic_Array/dynamic_array.h"
+#include "Single_Linked_List/single_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "Dynamic_Array/dynamic_array.h"
-#include "Single_Linked_List/single_list.h"
-#include "Double_Linked_List/double_list.h"
 
 #define TRIALS 100
 #define GROUP_SIZE 1000
-#define ELEMENT_COUNTS {100, 1000, 10000}
+#define ELEMENT_COUNTS {1000, 10000, 100000}
 
 /* Funkcja pomocnicza zwracająca czas w sekundach jako double */
 double get_time_in_seconds() {
@@ -17,10 +17,12 @@ double get_time_in_seconds() {
 }
 
 /* ----- Testy dla Dynamic Array ----- */
-int dynamic_array_find(DynamicArray *arr, void *key, int (*cmp)(const void*, const void*)) {
+int dynamic_array_find(DynamicArray *arr, void *key,
+                       int (*cmp)(const void *, const void *)) {
     for (int i = 0; i < arr->currSize; i++) {
-        void *element = (char*)arr->A + i * arr->elementSize;
-        if (cmp(element, key) == 0) return i;
+        void *element = (char *)arr->A + i * arr->elementSize;
+        if (cmp(element, key) == 0)
+            return i;
     }
     return -1;
 }
@@ -31,52 +33,62 @@ void test_dynamic_array(FILE *csv, int element_count) {
     for (int i = 0; i < element_count; i++) {
         insertAtEnd(&da, &i);
     }
-    
+
     int x = -1;
     int mid_idx = element_count / 2;
     double time_accum;
     double start, end;
-    
-    /* Operacje są grupowane – wykonujemy GROUP_SIZE operacji, aby zmierzyć łączny czas i podzielić przez GROUP_SIZE */
+
+    /* Operacje są grupowane – wykonujemy GROUP_SIZE operacji, aby zmierzyć
+     * łączny czas i podzielić przez GROUP_SIZE */
     // Insert Beginning
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             insertAtMiddle(&da, 0, &x);
-            deleteAtMiddle(&da, 0);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            deleteAtMiddle(&da, 0);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Insert,Beginning,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Insert,Beginning,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             insertAtMiddle(&da, mid_idx, &x);
-            deleteAtMiddle(&da, mid_idx);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            deleteAtMiddle(&da, mid_idx);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Insert,Middle,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Insert,Middle,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             insertAtEnd(&da, &x);
-            deleteAtEnd(&da);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            deleteAtEnd(&da);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Insert,End,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Insert,End,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Beginning
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -85,13 +97,16 @@ void test_dynamic_array(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             deleteAtMiddle(&da, 0);
-            insertAtMiddle(&da, 0, &x);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            insertAtMiddle(&da, 0, &x);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Delete,Beginning,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Delete,Beginning,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -99,13 +114,16 @@ void test_dynamic_array(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             deleteAtMiddle(&da, mid_idx);
-            insertAtMiddle(&da, mid_idx, &x);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            insertAtMiddle(&da, mid_idx, &x);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Delete,Middle,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Delete,Middle,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -113,13 +131,16 @@ void test_dynamic_array(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             deleteAtEnd(&da);
-            insertAtEnd(&da, &x);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            insertAtEnd(&da, &x);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Delete,End,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Delete,End,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Search
     int key = element_count; // element, którego nie ma
     time_accum = 0;
@@ -131,8 +152,9 @@ void test_dynamic_array(FILE *csv, int element_count) {
         end = get_time_in_seconds();
         time_accum += (end - start);
     }
-    fprintf(csv, "DynamicArray,Search,N/A,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "DynamicArray,Search,N/A,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     free(da.A);
 }
 
@@ -143,50 +165,59 @@ void test_single_list(FILE *csv, int element_count) {
     for (int i = 0; i < element_count; i++) {
         pushBack(&list, &i, sizeof(int));
     }
-    
+
     int x = -1;
     int mid_idx = element_count / 2;
     double time_accum = 0;
     double start, end;
-    
+
     // Insert Beginning
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             pushFront(&list, &x, sizeof(int));
-            popFront(&list);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            popFront(&list);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Insert,Beginning,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Insert,Beginning,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             pushIndex(&list, &x, sizeof(int), mid_idx);
-            popIndex(&list, mid_idx);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            popIndex(&list, mid_idx);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Insert,Middle,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Insert,Middle,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             pushBack(&list, &x, sizeof(int));
-            popBack(&list);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            popBack(&list);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Insert,End,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Insert,End,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Beginning
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -194,13 +225,16 @@ void test_single_list(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             popFront(&list);
-            pushFront(&list, &x, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            pushFront(&list, &x, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Delete,Beginning,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Delete,Beginning,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -208,13 +242,16 @@ void test_single_list(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             popIndex(&list, mid_idx);
-            pushIndex(&list, &x, sizeof(int), mid_idx);
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            pushIndex(&list, &x, sizeof(int), mid_idx);
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Delete,Middle,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Delete,Middle,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -222,13 +259,16 @@ void test_single_list(FILE *csv, int element_count) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             popBack(&list);
-            pushBack(&list, &x, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            pushBack(&list, &x, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Delete,End,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Delete,End,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Search
     int key = element_count;
     time_accum = 0;
@@ -240,8 +280,9 @@ void test_single_list(FILE *csv, int element_count) {
         end = get_time_in_seconds();
         time_accum += (end - start);
     }
-    fprintf(csv, "SingleLinkedList,Search,N/A,%f us,%d\n", (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "SingleLinkedList,Search,N/A,%f us,%d\n",
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     while (!empty(&list)) {
         popFront(&list);
     }
@@ -254,56 +295,66 @@ int double_compareInt(const void *a, const void *b) {
     return (*(const int *)a == *(const int *)b) ? 1 : 0;
 }
 
-void test_double_list(FILE *csv, int element_count, ListType type, const char *name) {
+void test_double_list(FILE *csv, int element_count, ListType type,
+                      const char *name) {
     DoubleLinkedListUnion list;
     doubleInitList(&list, type);
     for (int i = 0; i < element_count; i++) {
         doublePushBack(&list, type, &i, sizeof(int));
     }
-    
+
     int x = -1, dummy;
     int mid_idx = element_count / 2;
     double time_accum = 0;
     double start, end;
-    
+
     // Insert Beginning
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePushFront(&list, type, &x, sizeof(int));
-            doublePopFront(&list, type, &dummy, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePopFront(&list, type, &dummy, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Insert,Beginning,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Insert,Beginning,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePushIndex(&list, type, mid_idx, &x, sizeof(int));
-            doublePopIndex(&list, type, mid_idx, &dummy, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePopIndex(&list, type, mid_idx, &dummy, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Insert,Middle,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Insert,Middle,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Insert End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePushBack(&list, type, &x, sizeof(int));
-            doublePopBack(&list, type, &dummy, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePopBack(&list, type, &dummy, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Insert,End,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Insert,End,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Beginning
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -311,13 +362,16 @@ void test_double_list(FILE *csv, int element_count, ListType type, const char *n
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePopFront(&list, type, &dummy, sizeof(int));
-            doublePushFront(&list, type, &x, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePushFront(&list, type, &x, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Delete,Beginning,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Delete,Beginning,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -325,13 +379,16 @@ void test_double_list(FILE *csv, int element_count, ListType type, const char *n
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePopIndex(&list, type, mid_idx, &dummy, sizeof(int));
-            doublePushIndex(&list, type, mid_idx, &x, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePushIndex(&list, type, mid_idx, &x, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Delete,Middle,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Delete,Middle,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Delete End
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
@@ -339,13 +396,16 @@ void test_double_list(FILE *csv, int element_count, ListType type, const char *n
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePopBack(&list, type, &dummy, sizeof(int));
-            doublePushBack(&list, type, &x, sizeof(int));
         }
         end = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            doublePushBack(&list, type, &x, sizeof(int));
+        }
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Delete,End,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Delete,End,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     // Search
     int key = element_count;
     time_accum = 0;
@@ -357,8 +417,9 @@ void test_double_list(FILE *csv, int element_count, ListType type, const char *n
         end = get_time_in_seconds();
         time_accum += (end - start);
     }
-    fprintf(csv, "%s,Search,N/A,%f us,%d\n", name, (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
-    
+    fprintf(csv, "%s,Search,N/A,%f us,%d\n", name,
+            (time_accum / (TRIALS * GROUP_SIZE)) * 1e6, element_count);
+
     while (!doubleEmpty(&list, type)) {
         doublePopFront(&list, type, &dummy, sizeof(int));
     }
@@ -373,8 +434,8 @@ int main() {
     }
     fprintf(csv, "Structure,Operation,Position,Time(us),ElementCount\n");
     int counts[] = ELEMENT_COUNTS;
-    int count_len = sizeof(counts)/sizeof(counts[0]);
-    
+    int count_len = sizeof(counts) / sizeof(counts[0]);
+
     for (int i = 0; i < count_len; i++) {
         int ec = counts[i];
         test_dynamic_array(csv, ec);
@@ -382,8 +443,7 @@ int main() {
         test_double_list(csv, ec, DLL, "DoubleLinkedList");
         test_double_list(csv, ec, DLLWT, "DoubleLinkedListWithTail");
     }
-    
+
     fclose(csv);
     return 0;
 }
-
