@@ -157,12 +157,12 @@ void popBack(LinkedList *list) {
 }
 
 int compareInt(const void *a, const void *b) {
-    int int_a = *(int*) a;
-    int int_b = *(int*) b;
-    if (int_a == int_b) 
-        return 0;
-    else 
-        return (int_a < int_b) ? -1 : 1;
+   int int_a = *(int*) a;
+   int int_b = *(int*) b;
+   if (int_a == int_b) 
+       return 0;
+   else 
+       return (int_a < int_b) ? -1 : 1;
 }
 
 Node* find(LinkedList *list, void *key, CompareFunc cmp) {
