@@ -3,6 +3,7 @@
 
 #include "double_list.h"
 #include "single_list.h"
+#include "dynamic_array.h"
 
 int main() {
     DoubleNode *node = NULL;
