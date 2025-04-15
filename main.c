@@ -41,7 +41,7 @@ void test_single_linked_list(int n) {
     // Usuwanie z początku
     start = clock();
     for (int i = 0; i < n; i++) {
-        removeFront(&list);
+        popFront(&list);
     }
     end = clock();
     printf("[Singly] Usunięcie %d (front): %.6f s\n\n", n, (double)(end - start)/CLOCKS_PER_SEC);
