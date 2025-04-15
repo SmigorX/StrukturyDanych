@@ -1,42 +1,34 @@
 #include "double_list.h"
 
 // returns 0 if successful, 1 if failed
+// Inicjalizacja listy
 int doubleInitList(DoubleLinkedListUnion *list, ListType type) {
-    list = malloc(sizeof(DoubleLinkedListUnion));
-
-    if (list == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
-    }
-
     if (type == DLLWT) {
-        list->dllwt.tail = NULL;
         list->dllwt.head = NULL;
-    } else if (type == DLL) {
+        list->dllwt.tail = NULL;
+    } else {
         list->dll.head = NULL;
     }
-
     return 0;
-};
+}
 
+// Tworzenie nowego węzła (poprawione zarządzanie pamięcią)
 int doubleCreateNode(void *data, size_t dataSize, DoubleNode *node) {
-    DoubleNode *newDoubleNode = (DoubleNode *)malloc(sizeof(node));
-    if (newDoubleNode == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
+    DoubleNode **real_node = (DoubleNode **)node;
+    *real_node = malloc(sizeof(DoubleNode));
+    if (!*real_node) return 1;
+    
+    (*real_node)->data = malloc(dataSize);
+    if (!(*real_node)->data) {
+        free(*real_node);
         return 1;
     }
-    newDoubleNode->data = malloc(dataSize);
-    if (newDoubleNode->data == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
-    };
-    memcpy(newDoubleNode->data, data, dataSize);
-    newDoubleNode->next = NULL;
-    newDoubleNode->prev = NULL;
-    node = newDoubleNode;
+    
+    memcpy((*real_node)->data, data, dataSize);
+    (*real_node)->next = NULL;
+    (*real_node)->prev = NULL;
     return 0;
-};
-
+}
 // Returns 1 if empty
 const bool doubleEmpty(DoubleLinkedListUnion *list, ListType type) {
     if (type == DLL) {
@@ -47,30 +39,32 @@ const bool doubleEmpty(DoubleLinkedListUnion *list, ListType type) {
     return NULL;
 }
 
-void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *data,
-                     size_t dataSize) {
-
-    DoubleNode *newDoubleNode = NULL;
-    int result = doubleCreateNode(data, dataSize, newDoubleNode);
-
-    if (newDoubleNode == NULL || result == 1) {
-        fprintf(stderr, "Failed to create new node\n");
-        exit(1);
+// Dodawanie na początek listy
+void doublePushFront(DoubleLinkedListUnion *list, ListType type, void *data, 
+                    size_t dataSize) {
+    DoubleNode *new_node;
+    if (doubleCreateNode(data, dataSize, (DoubleNode *)&new_node) != 0) {
+        fprintf(stderr, "Failed to create node\n");
+        return;
     }
 
     if (type == DLLWT) {
-        DoubleNode *oldHead = list->dllwt.head;
-        list->dllwt.head = newDoubleNode;
-        oldHead->prev = list->dllwt.head;
-        list->dllwt.head->next = oldHead;
-    } else if (type == DLL) {
-        DoubleNode *oldHead = list->dll.head;
-        list->dll.head = newDoubleNode;
-        oldHead->prev = list->dll.head;
-        list->dll.head->next = oldHead;
+        new_node->next = list->dllwt.head;
+        if (list->dllwt.head) {
+            list->dllwt.head->prev = new_node;
+        }
+        list->dllwt.head = new_node;
+        if (!list->dllwt.tail) {
+            list->dllwt.tail = new_node;
+        }
+    } else {
+        new_node->next = list->dll.head;
+        if (list->dll.head) {
+            list->dll.head->prev = new_node;
+        }
+        list->dll.head = new_node;
     }
-};
-
+}
 void doublePushBack(DoubleLinkedListUnion *list, ListType type, void *data,
                     size_t dataSize) {
 
@@ -153,25 +147,33 @@ int doublePushIndex(DoubleLinkedListUnion *list, ListType type, int index,
 // Writes data from popped inedx to void *data argument pointer,
 // returns 0 if success, 1 if failure
 int doublePopFront(DoubleLinkedListUnion *list, ListType type, void *content) {
+    DoubleNode *to_remove = NULL;
+    
     if (type == DLLWT) {
-        content = list->dllwt.head->data;
-        list->dllwt.head->next->prev = NULL;
-        DoubleNode *oldHead = list->dllwt.head;
-        list->dllwt.head = list->dllwt.head->next;
-        free(oldHead);
-    } else if (type == DLL) {
-        content = list->dll.head->data;
-        list->dll.head->next->prev = NULL;
-        DoubleNode *oldHead = list->dll.head;
-        list->dll.head = list->dll.head->next;
-        free(oldHead);
+        if (!list->dllwt.head) return 1;
+        to_remove = list->dllwt.head;
+        list->dllwt.head = to_remove->next;
+        if (list->dllwt.head) {
+            list->dllwt.head->prev = NULL;
+        } else {
+            list->dllwt.tail = NULL;
+        }
     } else {
-        return 1;
+        if (!list->dll.head) return 1;
+        to_remove = list->dll.head;
+        list->dll.head = to_remove->next;
+        if (list->dll.head) {
+            list->dll.head->prev = NULL;
+        }
     }
 
+    if (content) {
+        memcpy(content, to_remove->data, sizeof(to_remove->data));
+    }
+    free(to_remove->data);
+    free(to_remove);
     return 0;
-};
-
+}
 // Writes data from popped inedx to void *data argument pointer, returns 0
 // if success, 1 if failure
 int doublePopBack(DoubleLinkedListUnion *list, ListType type, void *content) {
