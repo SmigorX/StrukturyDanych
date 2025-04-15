@@ -7,7 +7,7 @@
 
 #define TRIALS 100
 #define GROUP_SIZE 1000
-#define ELEMENT_COUNTS {1000, 10000, 100000}
+#define ELEMENT_COUNTS {100, 500, 1000, 5000, 10000}
 
 /* Funkcja pomocnicza zwracająca czas w sekundach jako double */
 double get_time_in_seconds() {
@@ -50,7 +50,11 @@ void test_dynamic_array(FILE *csv, int element_count) {
         }
         end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
-            deleteAtMiddle(&da, 0);
+            int error = deleteAtMiddle(&da, 0);
+            if (error != 0) {
+                fprintf(stderr, "[ERROR] (DynamicArray, insertAtBeginning) "
+                                "Coulnd't delete at beginning");
+            };
         }
         time_accum += (end - start);
     }
@@ -66,7 +70,11 @@ void test_dynamic_array(FILE *csv, int element_count) {
         }
         end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
-            deleteAtMiddle(&da, mid_idx);
+            int error = deleteAtMiddle(&da, mid_idx);
+            if (error != 0) {
+                fprintf(stderr, "[ERROR] (DynamicArray, insertAtMiddle) "
+                                "Coulnd't delete at middle");
+            };
         }
         time_accum += (end - start);
     }
@@ -82,7 +90,9 @@ void test_dynamic_array(FILE *csv, int element_count) {
         }
         end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
-            deleteAtEnd(&da);
+            int error = deleteAtEnd(&da);
+            if (error != 0) {
+            }
         }
         time_accum += (end - start);
     }
@@ -93,10 +103,16 @@ void test_dynamic_array(FILE *csv, int element_count) {
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
         // Przygotowanie – wstawiamy element, który potem usuwamy
-        insertAtMiddle(&da, 0, &x);
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            insertAtMiddle(&da, 0, &x);
+        }
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
-            deleteAtMiddle(&da, 0);
+            int error = deleteAtMiddle(&da, 0);
+            if (error != 0) {
+                fprintf(stderr, "[ERROR] (DynamicArray, deleteAtBeginning) "
+                                "Coulnd't delete beginning\n");
+            };
         }
         end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
@@ -110,10 +126,18 @@ void test_dynamic_array(FILE *csv, int element_count) {
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
-        insertAtMiddle(&da, mid_idx, &x);
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            insertAtMiddle(&da, mid_idx, &x);
+        }
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
-            deleteAtMiddle(&da, mid_idx);
+            int error = deleteAtMiddle(&da, mid_idx);
+            if (error != 0) {
+                printf("[Error] (DynamicArray, deleteAtMiddle) whilst deleting "
+                       "in the middle of dynamic "
+                       "array, element: %d\n",
+                       i);
+            }
         }
         end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
@@ -221,7 +245,9 @@ void test_single_list(FILE *csv, int element_count) {
     // Delete Beginning
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
-        pushFront(&list, &x, sizeof(int));
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            pushFront(&list, &x, sizeof(int));
+        }
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             popFront(&list);
@@ -238,15 +264,17 @@ void test_single_list(FILE *csv, int element_count) {
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
-        pushIndex(&list, &x, sizeof(int), mid_idx);
-        start = get_time_in_seconds();
-        for (int i = 0; i < GROUP_SIZE; i++) {
-            popIndex(&list, mid_idx);
-        }
-        end = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             pushIndex(&list, &x, sizeof(int), mid_idx);
         }
+        start = get_time_in_seconds();
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            int result = popIndex(&list, mid_idx);
+            if (result != 0) {
+                fprintf(stderr, "[ERROR] (SingleList, DeleteMiddle)");
+            }
+        }
+        end = get_time_in_seconds();
         time_accum += (end - start);
     }
     fprintf(csv, "SingleLinkedList,Delete,Middle,%f us,%d\n",
@@ -375,7 +403,15 @@ void test_double_list(FILE *csv, int element_count, ListType type,
     // Delete Middle
     time_accum = 0;
     for (int t = 0; t < TRIALS; t++) {
-        doublePushIndex(&list, type, mid_idx, &x, sizeof(int));
+        for (int i = 0; i < GROUP_SIZE; i++) {
+            int error = doublePushIndex(&list, type, mid_idx, &x, sizeof(int));
+            if (error != 0) {
+                fprintf(
+                    stderr,
+                    "[ERROR] (DoubleLinkedList, DeleteMiddle) Couldn't delete "
+                    "at middle");
+            };
+        };
         start = get_time_in_seconds();
         for (int i = 0; i < GROUP_SIZE; i++) {
             doublePopIndex(&list, type, mid_idx, &dummy, sizeof(int));

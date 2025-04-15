@@ -1,10 +1,8 @@
 #include "single_list.h"
 
-bool empty(LinkedList *list) {
-    return (list->head == NULL);
-}
+bool empty(LinkedList *list) { return (list->head == NULL); }
 
-void* front(LinkedList *list) {
+void *front(LinkedList *list) {
     if (empty(list))
         return NULL;
     return list->head->data;
@@ -15,8 +13,8 @@ void initList(LinkedList *list) {
     list->tail = NULL;
 }
 
-Node* createNode(void *data, size_t dataSize) {
-    Node *newNode = (Node*) malloc(sizeof(Node));
+Node *createNode(void *data, size_t dataSize) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
     if (newNode == NULL) {
         return NULL;
     }
@@ -74,7 +72,7 @@ void pushIndex(LinkedList *list, void *data, size_t dataSize, int index) {
         current = current->next;
     }
     if (current == NULL) {
-        printf("Index out of list size\n");
+        fprintf(stderr, "[ERROR] (pushIndex) Index out of list size\n");
         return;
     }
     Node *newNode = createNode(data, dataSize);
@@ -92,39 +90,43 @@ void pushIndex(LinkedList *list, void *data, size_t dataSize, int index) {
 
 void popFront(LinkedList *list) {
     if (empty(list)) {
-        printf("List is empty\n");
+        fprintf(stderr, "[ERROR] (popFront) List is empty\n");
         return;
     }
     Node *old = list->head;
     list->head = old->next;
-    if (list->head == NULL) {  // Lista stała się pusta
+    if (list->head == NULL) { // Lista stała się pusta
         list->tail = NULL;
     }
     free(old->data);
     free(old);
 }
 
-void popIndex(LinkedList *list, int index) {
+int popIndex(LinkedList *list, int index) {
     if (empty(list)) {
-        printf("List is empty\n");
-        return;
+        fprintf(stderr, "[ERROR] (popIndex) List is empty\n");
+        return 1;
     }
     if (index < 0) {
-        printf("Wrong index!\n");
-        return;
+        fprintf(stderr, "[ERROR] (popIndex) Wrong index!\n");
+        return 1;
     }
     if (index == 0) {
         popFront(list);
-        return;
+        return 1;
     }
     Node *current = list->head;
-    int i;
-    for (i = 0; current->next != NULL && i < index - 1; i++) {
+    int i = 0;
+    for (; current->next != NULL && i < index - 1; i++) {
         current = current->next;
     }
-    if (current->next == NULL) {
-        printf("Index out of list size\n");
-        return;
+    if (current->next == NULL && i != index) {
+        fprintf(
+            stderr,
+            "[ERROR] (popIndex) Index out of list size, index: %d, current: "
+            "%d\n",
+            index, i);
+        return 1;
     }
     Node *old = current->next;
     current->next = old->next;
@@ -133,14 +135,15 @@ void popIndex(LinkedList *list, int index) {
     }
     free(old->data);
     free(old);
+    return 0;
 }
 
 void popBack(LinkedList *list) {
     if (empty(list)) {
-        printf("List is empty\n");
+        fprintf(stderr, "[ERROR] (popBack) List is empty\n");
         return;
     }
-    if (list->head->next == NULL) {  // Tylko jeden element
+    if (list->head->next == NULL) { // Tylko jeden element
         free(list->head->data);
         free(list->head);
         list->head = list->tail = NULL;
@@ -157,15 +160,15 @@ void popBack(LinkedList *list) {
 }
 
 int compareInt(const void *a, const void *b) {
-   int int_a = *(int*) a;
-   int int_b = *(int*) b;
-   if (int_a == int_b) 
-       return 0;
-   else 
-       return (int_a < int_b) ? -1 : 1;
+    int int_a = *(int *)a;
+    int int_b = *(int *)b;
+    if (int_a == int_b)
+        return 0;
+    else
+        return (int_a < int_b) ? -1 : 1;
 }
 
-Node* find(LinkedList *list, void *key, CompareFunc cmp) {
+Node *find(LinkedList *list, void *key, CompareFunc cmp) {
     Node *current = list->head;
     while (current != NULL) {
         if (cmp(current->data, key) == 0) {
@@ -176,13 +179,11 @@ Node* find(LinkedList *list, void *key, CompareFunc cmp) {
     return NULL;
 }
 
-void printInt(const void *data) {
-    printf("%d -> ", *(int*) data);
-}
+void printInt(const void *data) { printf("%d -> ", *(int *)data); }
 
-void printList(LinkedList *list, void (*printFunc)(const void*)) {
+void printList(LinkedList *list, void (*printFunc)(const void *)) {
     Node *current = list->head;
-    while(current != NULL) {
+    while (current != NULL) {
         printFunc(current->data);
         current = current->next;
     }

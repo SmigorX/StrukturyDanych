@@ -19,7 +19,8 @@ void initArray(DynamicArray *arr, size_t elementSize);
 /* Zwiększenie tablicy – jeśli tablica jest pełna, podwajamy jej rozmiar */
 void reSizeArray(DynamicArray *arr);
 
-/* Zmniejszenie tablicy – jeżeli wykorzystanie spadnie do 1/4, zmniejszamy pojemność o połowę */
+/* Zmniejszenie tablicy – jeżeli wykorzystanie spadnie do 1/4, zmniejszamy
+ * pojemność o połowę */
 void shrinkArray(DynamicArray *arr);
 
 /* Wstawienie nowego elementu na końcu tablicy */
@@ -29,9 +30,9 @@ void insertAtEnd(DynamicArray *arr, void *x);
 void insertAtMiddle(DynamicArray *arr, int index, void *x);
 
 /* Usunięcie ostatniego elementu tablicy */
-void deleteAtEnd(DynamicArray *arr);
+int deleteAtEnd(DynamicArray *arr);
 
 /* Usunięcie elementu znajdującego się pod wskazanym indeksem */
-void deleteAtMiddle(DynamicArray *arr, int index);
+int deleteAtMiddle(DynamicArray *arr, int index);
 
 #endif

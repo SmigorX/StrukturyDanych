@@ -1,6 +1,7 @@
 #include "dynamic_array.h"
 
-/* Inicjalizuje dynamiczną tablicę ustawiając pojemność na 1 i przechowując rozmiar elementu */
+/* Inicjalizuje dynamiczną tablicę ustawiając pojemność na 1 i przechowując
+ * rozmiar elementu */
 void initArray(DynamicArray *arr, size_t elementSize) {
     arr->A = malloc(elementSize); // początkowo miejsce na 1 element
     if (arr->A == NULL) {
@@ -18,7 +19,8 @@ void reSizeArray(DynamicArray *arr) {
         int newCapacity = arr->capacity * 2;
         void *temp = malloc(newCapacity * arr->elementSize);
         if (temp == NULL) {
-            fprintf(stderr, "Błąd alokacji pamięci przy rozszerzaniu tablicy!\n");
+            fprintf(stderr,
+                    "Błąd alokacji pamięci przy rozszerzaniu tablicy!\n");
             exit(EXIT_FAILURE);
         }
         /* Przenosimy istniejące elementy do nowo zaalokowanego obszaru */
@@ -35,7 +37,8 @@ void shrinkArray(DynamicArray *arr) {
         int newCapacity = arr->capacity / 2;
         void *temp = malloc(newCapacity * arr->elementSize);
         if (temp == NULL) {
-            fprintf(stderr, "Błąd alokacji pamięci przy zmniejszaniu tablicy!\n");
+            fprintf(stderr,
+                    "Błąd alokacji pamięci przy zmniejszaniu tablicy!\n");
             exit(EXIT_FAILURE);
         }
         memcpy(temp, arr->A, arr->currSize * arr->elementSize);
@@ -51,56 +54,60 @@ void insertAtEnd(DynamicArray *arr, void *x) {
         reSizeArray(arr);
     }
     /* Kopiujemy zawartość x do odpowiedniego miejsca w tablicy */
-    memcpy((char*)arr->A + arr->currSize * arr->elementSize, x, arr->elementSize);
+    memcpy((char *)arr->A + arr->currSize * arr->elementSize, x,
+           arr->elementSize);
     arr->currSize++;
 }
 
 /* Wstawia element pod wskazanym indeksem (w środek) */
 void insertAtMiddle(DynamicArray *arr, int index, void *x) {
     if (index < 0 || index > arr->currSize) {
-        fprintf(stderr, "Błędny indeks!\n");
+        fprintf(stderr, "Błędny indeks! %d\n");
         return;
     }
     if (arr->currSize == arr->capacity) {
         reSizeArray(arr);
     }
     /* Przesuwamy elementy w prawo, by zrobić miejsce */
-    memmove((char*)arr->A + (index + 1) * arr->elementSize,
-            (char*)arr->A + index * arr->elementSize,
+    memmove((char *)arr->A + (index + 1) * arr->elementSize,
+            (char *)arr->A + index * arr->elementSize,
             (arr->currSize - index) * arr->elementSize);
-    memcpy((char*)arr->A + index * arr->elementSize, x, arr->elementSize);
+    memcpy((char *)arr->A + index * arr->elementSize, x, arr->elementSize);
     arr->currSize++;
 }
 
 /* Usuwa ostatni element tablicy */
-void deleteAtEnd(DynamicArray *arr) {
+int deleteAtEnd(DynamicArray *arr) {
     if (arr->currSize == 0) {
-        printf("Dynamic array is empty!\n");
-        return;
+        fprintf(stderr, "[ERROR] (deleteAtEnd) Dynamic array is empty!\n");
+        return 1;
     }
     arr->currSize--;
     /* Opcjonalnie: wyzerowanie obszaru usuwanego elementu (np. memset) */
     if (arr->currSize <= arr->capacity / 4) {
         shrinkArray(arr);
     }
+    return 0;
 }
 
 /* Usuwa element znajdujący się pod indeksem */
-void deleteAtMiddle(DynamicArray *arr, int index) {
+int deleteAtMiddle(DynamicArray *arr, int index) {
     if (arr->currSize == 0) {
-        printf("Dynamic array is empty!\n");
-        return;
+        fprintf(stderr, "[ERROR] (deleteAtMiddle) Dynamic array is empty!\n");
+        return 1;
     }
     if (index < 0 || index >= arr->currSize) {
-        fprintf(stderr, "Błędny indeks!\n");
-        return;
+        fprintf(stderr, "Błędny indeks! %d, arr size: %d\n", index,
+                arr->currSize);
+        return 1;
     }
     /* Przesuwamy elementy w lewo, by nadpisać usuwany element */
-    memmove((char*)arr->A + index * arr->elementSize,
-            (char*)arr->A + (index + 1) * arr->elementSize,
+    memmove((char *)arr->A + index * arr->elementSize,
+            (char *)arr->A + (index + 1) * arr->elementSize,
             (arr->currSize - index - 1) * arr->elementSize);
     arr->currSize--;
     if (arr->currSize <= arr->capacity / 4) {
         shrinkArray(arr);
     }
+    return 0;
 }
