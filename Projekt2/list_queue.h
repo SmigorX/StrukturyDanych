@@ -4,12 +4,22 @@
 
 #include "common.h"
 
-void list_init();
-void list_insert(Element e);
-Element list_pop();
-Element list_peek();
-int list_size();
-void list_change_priority(int value, int new_priority);
-void list_free();
+typedef struct Node {
+    Element data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int size;
+    Node *head;
+} List_queue;
+
+List_queue list_init();
+int list_size(List_queue *);
+void list_insert(List_queue *, Element);
+Element list_peek(List_queue *);
+Element list_pop(List_queue *);
+void list_change_priority(List_queue *, int, int);
+void list_free(List_queue *);
 
 #endif // LIST_QUEUE_H

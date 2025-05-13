@@ -6,8 +6,8 @@
 #include <time.h>
 
 #define TRIALS 100
-#define GROUP_SIZE 1000
-#define ELEMENT_COUNTS {100, 500, 1000, 5000, 10000}
+#define GROUP_SIZE 100
+#define ELEMENT_COUNTS {100, 500, 100, 500, 100}
 
 /* Funkcja pomocnicza zwracająca czas w sekundach jako double */
 double get_time_in_seconds() {
