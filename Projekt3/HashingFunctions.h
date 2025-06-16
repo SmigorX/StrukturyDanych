@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+// Hashing functions
+// Hash table data structure
+// Collision avoidance
+
 size_t sdbm(char original[]) {
     size_t hash = 0;
     int c;
